@@ -1,6 +1,7 @@
 import express, { Router, Request, Response } from 'express'
-import { Movie, movies, MovieNoId, addMovie } from './data/moviesData.js'
+import { Movie, movies, MovieNoId, addMovie, deleteMovie} from './data/moviesData.js'
 import { isValidMovieExceptId } from './data/validateData.js'
+import { number } from 'joi'
 
 export const router: Router = express.Router()
 
@@ -37,3 +38,46 @@ router.post('/', (req: Request<void, void, MovieNoId>, res: Response) => {
   addMovie(newMovie)
   res.sendStatus(201)
 })
+
+//Put
+router.put('/:id',(req: Request<IdParam, void, MovieNoId>, res: Response) => {
+  const id: number = Number(req.params.id)
+  if(!isValidId(id)){
+    res.sendStatus(400)//bad request
+    return
+  }
+
+  const newMovie: MovieNoId = req.body
+  if(!isValidMovieExceptId(newMovie)){
+    res.sendStatus(400)
+    return
+  }
+
+  const index: number = movies.findIndex(movie => movie.id === id)
+  if(index === -1){
+    res.sendStatus(404)
+    return
+  }
+
+  movies[index] = {...newMovie, id:id}
+  res.sendStatus(204)
+})
+
+
+//Delete 
+
+router.delete('/:id', (req: Request<IdParam>, res:Response)=>{
+  const id: number = Number(req.params.id)
+  if(!isValidId(id)){
+    res.sendStatus(400)//bad request
+    return
+  }
+  deleteMovie(id)
+  res.sendStatus(204)
+})
+
+//Hjälp funktion
+function isValidId(maybeId: number): boolean {
+	return !isNaN(maybeId) && maybeId >= 0
+}
+

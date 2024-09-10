@@ -12,10 +12,10 @@ app.use('/', (req: Request, res: Response, next: NextFunction) => {
   next()
 })
 
-//Test get request
-// app.get('/', (req: Request, res: Response) => {
-//   res.status(200).send('Hello from server')
-// })
+// Test get request
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).send('Hello from server')
+})
 
 app.use('/movies', router)
 

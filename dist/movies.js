@@ -1,5 +1,5 @@
 import express from 'express';
-import { movies, addMovie } from './data/moviesData.js';
+import { movies, addMovie, deleteMovie } from './data/moviesData.js';
 import { isValidMovieExceptId } from './data/validateData.js';
 export const router = express.Router();
 //få ut alla filmer
@@ -29,3 +29,37 @@ router.post('/', (req, res) => {
     addMovie(newMovie);
     res.sendStatus(201);
 });
+//Put
+router.put('/:id', (req, res) => {
+    const id = Number(req.params.id);
+    if (!isValidId(id)) {
+        res.sendStatus(400); //bad request
+        return;
+    }
+    const newMovie = req.body;
+    if (!isValidMovieExceptId(newMovie)) {
+        res.sendStatus(400);
+        return;
+    }
+    const index = movies.findIndex(movie => movie.id === id);
+    if (index === -1) {
+        res.sendStatus(404);
+        return;
+    }
+    movies[index] = { ...newMovie, id: id };
+    res.sendStatus(204);
+});
+//Delete 
+router.delete('/:id', (req, res) => {
+    const id = Number(req.params.id);
+    if (!isValidId(id)) {
+        res.sendStatus(400); //bad request
+        return;
+    }
+    deleteMovie(id);
+    res.sendStatus(204);
+});
+//Hjälp funktion
+function isValidId(maybeId) {
+    return !isNaN(maybeId) && maybeId >= 0;
+}

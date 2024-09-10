@@ -11,7 +11,10 @@ export function addMovie(newMovie) {
     const movie = { ...newMovie, id: generateId() };
     movies.push(movie);
 }
-export const movies = [
+export function deleteMovie(id) {
+    movies = movies.filter(movie => movie.id !== id);
+}
+export let movies = [
     {
         id: 1,
         titel: 'My Neighbor Totoro',
